@@ -1,4 +1,7 @@
 package io.github.yamo97.sudokusolver.model
 
-class Cell {
-}
+data class Cell (
+    val row: Int,
+    val col: Int,
+    var value: Int
+)
