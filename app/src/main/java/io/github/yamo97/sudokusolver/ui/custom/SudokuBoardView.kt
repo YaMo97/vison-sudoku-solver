@@ -1,4 +1,4 @@
-package io.github.yamo97.sudokusolver.ui.game
+package io.github.yamo97.sudokusolver.ui.custom
 
 import android.content.Context
 import android.graphics.Canvas
@@ -15,8 +15,10 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     private var cellSizePixels = 0F
 
-    private var selectedRow = 4
-    private var selectedCol = 4
+    private var selectedRow = -1
+    private var selectedCol = -1
+
+    private var listener: OnTouchListener? = null
 
     private val thickLinePaint = Paint().apply {
         style = Paint.Style.STROKE
@@ -126,8 +128,22 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     private fun handleTouchEvent(x: Float, y: Float) {
-        selectedRow = ( y / cellSizePixels ).toInt()
-        selectedCol = ( x / cellSizePixels ).toInt()
+        val possibleSelectedRow = ( y / cellSizePixels ).toInt()
+        val possibleSelectedCol = ( x / cellSizePixels ).toInt()
+        listener?.onCellTouched(possibleSelectedRow, possibleSelectedCol)
+    }
+
+    fun updateSelectedCellUI(row: Int, col: Int) {
+        selectedRow = row
+        selectedCol = col
         invalidate()
+    }
+
+    fun registerListener(listener: OnTouchListener) {
+        this.listener = listener
+    }
+
+    interface OnTouchListener {
+        fun onCellTouched(row: Int, col: Int)
     }
 }
