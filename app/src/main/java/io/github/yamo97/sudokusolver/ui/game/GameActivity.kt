@@ -1,6 +1,7 @@
 package io.github.yamo97.sudokusolver.ui.game
 
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
@@ -50,6 +51,7 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
         }
 
         binding.buttonsLayout.notesButton.setOnClickListener { viewModel.sudokuGame.changeNoteTakingState() }
+        binding.buttonsLayout.deleteButton.setOnClickListener { viewModel.sudokuGame.deleteCell() }
 
         binding.sudokuBoardView.registerListener(object : SudokuBoardView.OnTouchListener {
             override fun onCellTouched(row: Int, col: Int) {
@@ -68,13 +70,12 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
 
     private fun updateNotesTakingUI(isTakingNotes: Boolean?) = isTakingNotes?.let {
 
-        binding.buttonsLayout.notesButton.setBackgroundColor(
-            if (it)
-                ContextCompat.getColor(this, R.color.purple_500)
-            else
-                Color.LTGRAY
-        )
+        val color = if (it)
+            ContextCompat.getColor(this, R.color.purple_500)
+        else
+            Color.LTGRAY
 
+        binding.buttonsLayout.notesButton.background.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
     }
 
     private fun updateHighlightedKeys(notes: Set<Int>?)  = notes?.let {
@@ -85,7 +86,7 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
             else
                 Color.LTGRAY
 
-            button.setBackgroundColor(color)
+            button.background.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
         }
     }
 
