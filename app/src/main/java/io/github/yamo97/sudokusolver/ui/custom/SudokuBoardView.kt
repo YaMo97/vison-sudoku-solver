@@ -1,10 +1,7 @@
 package io.github.yamo97.sudokusolver.ui.custom
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -52,6 +49,18 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         textSize = 24F
     }
 
+    private val startingCellTextPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.BLACK
+        textSize = 32F
+        typeface = Typeface.DEFAULT_BOLD
+    }
+
+    private val startingCellPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.parseColor("#acacac")
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val sizePixels = widthMeasureSpec.coerceAtMost(heightMeasureSpec)
@@ -74,15 +83,22 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val r = it.row
             val c = it.col
 
-            if ( r == selectedRow && c == selectedCol ) {
-                // Selected Cell
-                fillCell(canvas, r, c, selectedCellPaint)
-            } else if (r == selectedRow || c == selectedCol) {
-                // Other cells in Selected Row or Columns
-                fillCell(canvas, r, c, conflictingCellPaint)
-            } else if ( r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize ) {
-                // Other cells in Selected Box
-                fillCell(canvas, r, c, conflictingCellPaint)
+            when {
+                it.isStartingCell -> {
+                    fillCell(canvas, r, c, startingCellPaint)
+                }
+                r == selectedRow && c == selectedCol -> {
+                    // Selected Cell
+                    fillCell(canvas, r, c, selectedCellPaint)
+                }
+                r == selectedRow || c == selectedCol -> {
+                    // Other cells in Selected Row or Columns
+                    fillCell(canvas, r, c, conflictingCellPaint)
+                }
+                r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize -> {
+                    // Other cells in Selected Box
+                    fillCell(canvas, r, c, conflictingCellPaint)
+                }
             }
         }
     }
@@ -133,9 +149,11 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val col = it.col
             val valueString = it.value.toString()
 
+            val paintToUse = if (it.isStartingCell) startingCellTextPaint else textPaint
+
             val textBounds = Rect()
-            textPaint.getTextBounds(valueString, 0, valueString.length, textBounds)
-            val textWidth = textPaint.measureText(valueString)
+            paintToUse.getTextBounds(valueString, 0, valueString.length, textBounds)
+            val textWidth = paintToUse.measureText(valueString)
             val textHeight = textBounds.height()
 
             /**
@@ -146,7 +164,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 valueString,
                 (col * cellSizePixels) + (cellSizePixels / 2) - (textWidth / 2),
                 (row * cellSizePixels) + (cellSizePixels / 2) - (textHeight / 2),
-                textPaint
+                paintToUse
             )
 
         }
