@@ -1,9 +1,12 @@
 package io.github.yamo97.sudokusolver.ui.game
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import io.github.yamo97.sudokusolver.R
 import io.github.yamo97.sudokusolver.databinding.ActivityGameBinding
 import io.github.yamo97.sudokusolver.model.Cell
 import io.github.yamo97.sudokusolver.ui.BaseActivity
@@ -13,7 +16,7 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
 
     private lateinit var viewModel: GameViewModel
 
-    private var buttons: List<Button>? = null
+    private lateinit var numberButtons: List<Button>
 
     override fun getViewBinding(inflater: LayoutInflater): ActivityGameBinding
         = ActivityGameBinding.inflate(inflater)
@@ -27,7 +30,11 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
 
         viewModel.sudokuGame.cellsLiveData.observe(this, { updateCells(it) })
 
-        buttons = listOf(
+        viewModel.sudokuGame.isTakingNotesLiveData.observe(this, { updateNotesTakingUI(it) })
+
+        viewModel.sudokuGame.highlightedKeysLiveData.observe(this, { updateHighlightedKeys(it) })
+
+        numberButtons = listOf(
             binding.buttonsLayout.oneButton,
             binding.buttonsLayout.twoButton,
             binding.buttonsLayout.threeButton,
@@ -38,9 +45,11 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
             binding.buttonsLayout.eightButton,
             binding.buttonsLayout.nineButton
         )
-        buttons?.forEachIndexed { index, button ->
+        numberButtons.forEachIndexed { index, button ->
             button.setOnClickListener { viewModel.sudokuGame.handleInput(index + 1) }
         }
+
+        binding.buttonsLayout.notesButton.setOnClickListener { viewModel.sudokuGame.changeNoteTakingState() }
 
         binding.sudokuBoardView.registerListener(object : SudokuBoardView.OnTouchListener {
             override fun onCellTouched(row: Int, col: Int) {
@@ -56,4 +65,28 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
         binding.sudokuBoardView.updateSelectedCellUI(cell.first, cell.second)
     }
+
+    private fun updateNotesTakingUI(isTakingNotes: Boolean?) = isTakingNotes?.let {
+
+        binding.buttonsLayout.notesButton.setBackgroundColor(
+            if (it)
+                ContextCompat.getColor(this, R.color.purple_500)
+            else
+                Color.LTGRAY
+        )
+
+    }
+
+    private fun updateHighlightedKeys(notes: Set<Int>?)  = notes?.let {
+
+        numberButtons.forEachIndexed { index, button ->
+            val color = if ( notes.contains(index + 1) )
+                ContextCompat.getColor(this, R.color.purple_500)
+            else
+                Color.LTGRAY
+
+            button.setBackgroundColor(color)
+        }
+    }
+
 }

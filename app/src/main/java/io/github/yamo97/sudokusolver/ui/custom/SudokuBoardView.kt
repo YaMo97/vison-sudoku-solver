@@ -6,13 +6,16 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import io.github.yamo97.sudokusolver.model.Cell
+import kotlin.math.sqrt
 
 class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
 
     private val sqrtSize = 3
     private val size = 9
 
+    // These are set in onDraw
     private var cellSizePixels = 0F
+    private var noteSizePixels = 0F
 
     private var selectedRow = -1
     private var selectedCol = -1
@@ -46,19 +49,22 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 24F
     }
 
     private val startingCellTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 32F
         typeface = Typeface.DEFAULT_BOLD
     }
 
     private val startingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#acacac")
+    }
+
+    private val noteTextPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.BLACK
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -71,11 +77,21 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         super.onDraw(canvas)
         if (canvas == null) return
 
-        cellSizePixels = (width / size).toFloat()
+        updateMeasurements(width)
 
         fillCells(canvas)
         drawLines(canvas)
         drawText(canvas)
+    }
+
+    private fun updateMeasurements(width: Int) {
+
+        cellSizePixels = (width / size).toFloat()
+        noteSizePixels = cellSizePixels / sqrtSize.toFloat()
+
+        noteTextPaint.textSize = cellSizePixels / sqrtSize.toFloat()
+        textPaint.textSize = cellSizePixels / 1.5F
+        startingCellTextPaint.textSize = cellSizePixels / 1.5F
     }
 
     private fun fillCells(canvas: Canvas) {
@@ -144,28 +160,57 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     private fun drawText(canvas: Canvas) {
-        cells?.forEach {
-            val row = it.row
-            val col = it.col
-            val valueString = it.value.toString()
+        cells?.forEach { cell ->
 
-            val paintToUse = if (it.isStartingCell) startingCellTextPaint else textPaint
+            val value = cell.value
 
             val textBounds = Rect()
-            paintToUse.getTextBounds(valueString, 0, valueString.length, textBounds)
-            val textWidth = paintToUse.measureText(valueString)
-            val textHeight = textBounds.height()
 
-            /**
-             * startX = startX of Box + half of box size - half of textWidth to be printed in center
-             * startY = startY of Box + half of box size - half of textHeight to be printed in center
-             */
-            canvas.drawText(
-                valueString,
-                (col * cellSizePixels) + (cellSizePixels / 2) - (textWidth / 2),
-                (row * cellSizePixels) + (cellSizePixels / 2) - (textHeight / 2),
-                paintToUse
-            )
+            if ( value == 0 ) {
+                // Draw notes
+
+                cell.notes.forEach { note ->
+                    val rowInCell = (note - 1) / sqrtSize
+                    val colInCell = (note - 1) % sqrtSize
+
+                    val valueString = note.toString()
+
+                    noteTextPaint.getTextBounds(valueString, 0, valueString.length, textBounds)
+                    val textWidth = noteTextPaint.measureText(valueString)
+                    val textHeight = textBounds.height()
+
+                    canvas.drawText(
+                        valueString,
+                        (cell.col * cellSizePixels) + (colInCell * noteSizePixels) + (noteSizePixels / 2) - (textWidth / 2),
+                        (cell.row * cellSizePixels) + (rowInCell * noteSizePixels) + (noteSizePixels / 2) + (textHeight / 2),
+                        noteTextPaint
+                    )
+
+                }
+
+            } else {
+                val row = cell.row
+                val col = cell.col
+
+                val valueString = cell.value.toString()
+
+                val paintToUse = if (cell.isStartingCell) startingCellTextPaint else textPaint
+
+                paintToUse.getTextBounds(valueString, 0, valueString.length, textBounds)
+                val textWidth = paintToUse.measureText(valueString)
+                val textHeight = textBounds.height()
+
+                /**
+                 * startX = startX of Box + half of box size - half of textWidth to be printed in center
+                 * startY = startY of Box + half of box size - half of textHeight to be printed in center
+                 */
+                canvas.drawText(
+                    valueString,
+                    (col * cellSizePixels) + (cellSizePixels / 2) - (textWidth / 2),
+                    (row * cellSizePixels) + (cellSizePixels / 2) + (textHeight / 2),
+                    paintToUse
+                )
+            }
 
         }
     }
