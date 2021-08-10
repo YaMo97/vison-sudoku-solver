@@ -3,6 +3,7 @@ package io.github.yamo97.sudokusolver.ui.list
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -25,6 +26,10 @@ class PuzzlesListActivity : BaseActivity<ActivityPuzzlesListBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Show Progress Bar & Hide Recycler View
+        binding.progressBar.visibility = View.VISIBLE
+        binding.puzzlesListRecyclerView.visibility = View.GONE
+
         mViewModel = ViewModelProvider(this).get(PuzzlesListViewModel::class.java)
 
         mViewModel.puzzlesLiveData.observe(this) { updatePuzzlesRecyclerView(it) }
@@ -45,6 +50,10 @@ class PuzzlesListActivity : BaseActivity<ActivityPuzzlesListBinding>() {
 
     private fun updatePuzzlesRecyclerView(puzzlesList: List<Puzzle>?) = puzzlesList?.let {
         puzzlesListAdapter.updateList(it)
+
+        // Hide Progress Bar & Show Recycler View
+        binding.puzzlesListRecyclerView.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun onPuzzleClicked(puzzle: Puzzle) {
