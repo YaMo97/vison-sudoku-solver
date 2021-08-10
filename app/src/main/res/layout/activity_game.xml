@@ -2,8 +2,27 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toTopOf="@id/sudokuBoardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/sudokuBoardView"
+
+        android:elevation="2dp"
+
+        android:indeterminate="true"
+        android:indeterminateTint="?attr/colorPrimary"
+
+        style="?android:attr/progressBarStyleSmall"
+        tools:ignore="UnusedAttribute" />
 
     <io.github.yamo97.sudokusolver.ui.custom.SudokuBoardView
         android:id="@+id/sudokuBoardView"

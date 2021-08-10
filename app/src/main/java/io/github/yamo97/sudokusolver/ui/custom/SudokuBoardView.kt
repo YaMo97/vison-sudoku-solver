@@ -242,6 +242,11 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         invalidate()
     }
 
+    fun clearAllCells() {
+        this.cells = null
+        invalidate()
+    }
+
     fun registerListener(listener: OnTouchListener) {
         this.listener = listener
     }

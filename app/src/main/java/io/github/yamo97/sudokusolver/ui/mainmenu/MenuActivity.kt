@@ -1,11 +1,11 @@
-package io.github.yamo97.sudokusolver.ui.menu
+package io.github.yamo97.sudokusolver.ui.mainmenu
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import io.github.yamo97.sudokusolver.databinding.ActivityMenuBinding
 import io.github.yamo97.sudokusolver.ui.BaseActivity
-import io.github.yamo97.sudokusolver.ui.game.GameActivity
+import io.github.yamo97.sudokusolver.ui.listmenu.PuzzlesListActivity
 import io.github.yamo97.sudokusolver.util.toast
 
 class MenuActivity : BaseActivity<ActivityMenuBinding>() {
@@ -21,8 +21,8 @@ class MenuActivity : BaseActivity<ActivityMenuBinding>() {
             toast("To be implemented!")
         }
 
-        binding.manualButton.setOnClickListener {
-            startActivity(Intent(this, GameActivity::class.java))
+        binding.solveButton.setOnClickListener {
+            startActivity(Intent(this, PuzzlesListActivity::class.java))
         }
     }
 }

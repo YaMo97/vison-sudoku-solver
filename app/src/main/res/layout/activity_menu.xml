@@ -24,31 +24,33 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="Sudoku Solver"
+        android:text="Sudoku"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/scanButton"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="Scan Grid"
+
+        android:layout_marginBottom="96dp"
+        android:text="Scan &amp; Solve"
         app:icon="@drawable/ic_baseline_camera_24"
-        app:layout_constraintBottom_toTopOf="@+id/manualButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/manualButton"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/solveButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="96dp"
-        android:text="Enter Manually"
-        app:icon="@drawable/ic_baseline_keyboard_24"
-        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="24dp"
+        android:text="Solve Puzzles"
+        app:icon="@drawable/ic_baseline_grid_on_24"
+        app:layout_constraintBottom_toTopOf="@+id/scanButton"
         app:layout_constraintEnd_toEndOf="@+id/scanButton"
         app:layout_constraintStart_toStartOf="@+id/scanButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

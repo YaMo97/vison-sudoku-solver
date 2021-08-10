@@ -2,7 +2,7 @@ package io.github.yamo97.sudokusolver.model
 
 import androidx.lifecycle.MutableLiveData
 
-class SudokuGame {
+class SudokuGame(puzzle: Puzzle) {
 
     val selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
     val cellsLiveData = MutableLiveData<List<Cell>>()
@@ -13,7 +13,7 @@ class SudokuGame {
     private var selectedCol = -1
     private var isTakingNotes = false
 
-    private val board = Board.createStartingBoard()
+    private val board = puzzle.board
 
     init {
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
