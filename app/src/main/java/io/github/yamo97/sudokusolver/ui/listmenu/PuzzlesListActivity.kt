@@ -1,4 +1,4 @@
-package io.github.yamo97.sudokusolver.ui.list
+package io.github.yamo97.sudokusolver.ui.listmenu
 
 import android.content.Intent
 import android.os.Bundle

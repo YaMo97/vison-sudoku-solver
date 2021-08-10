@@ -9,9 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SudokuSolver">
-        <activity android:name=".ui.list.PuzzlesListActivity"></activity>
+        <activity android:name=".ui.listmenu.PuzzlesListActivity"></activity>
         <activity
-            android:name=".ui.menu.MenuActivity"
+            android:name=".ui.mainmenu.MenuActivity"
             android:theme="@style/Theme.SudokuSolver">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
