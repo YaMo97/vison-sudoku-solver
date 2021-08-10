@@ -5,10 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.yamo97.sudokusolver.di.sudokuRepository
+import io.github.yamo97.sudokusolver.model.Cell
 import io.github.yamo97.sudokusolver.model.GameState
 import io.github.yamo97.sudokusolver.model.Puzzle
 import io.github.yamo97.sudokusolver.model.SudokuGame
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GameViewModel: ViewModel() {
     private val TAG = GameViewModel::class.simpleName
@@ -41,5 +44,28 @@ class GameViewModel: ViewModel() {
 
     private suspend fun loadPuzzle(): Puzzle? {
         return if (puzzleID > -1) sudokuRepository.getPuzzleByID(puzzleID) else null
+    }
+
+    /**
+     * Checked Everytime an input is received.
+     *
+     * Can send completion signal multiple times.
+     */
+    fun checkForCompletion(cells: List<Cell>) {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                // If All cells are filled
+                if ( cells.contains(Cell(0, 0, 0)) ) {
+                    // Not completed
+                } else {
+                    // completed
+                    gameStatusLiveData.postValue(GameState.COMPLETED)
+                }
+            }
+        }
+    }
+
+    fun checkSolution() {
+
     }
 }

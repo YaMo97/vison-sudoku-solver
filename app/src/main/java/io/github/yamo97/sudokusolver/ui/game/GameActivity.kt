@@ -3,13 +3,13 @@ package io.github.yamo97.sudokusolver.ui.game
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import io.github.yamo97.sudokusolver.R
 import io.github.yamo97.sudokusolver.databinding.ActivityGameBinding
 import io.github.yamo97.sudokusolver.model.Cell
@@ -70,7 +70,12 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
                 binding.loadingBar.visibility = View.GONE
             }
             GameState.COMPLETED -> {
-
+                // Show a dismissible snack bar saying "Check solution?"
+                Snackbar.make(binding.rootLayout, "Check solution?", Snackbar.LENGTH_INDEFINITE)
+                    .also {
+                        it.setAction("Check") { viewModel.checkSolution() }
+                    }
+                    .show()
             }
             GameState.ERROR -> {
                 toast("Couldn't start the Game. Please try again.")
@@ -100,6 +105,7 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
 
     private fun updateCells(cells: List<Cell>?) = cells?.let {
         binding.sudokuBoardView.updateCells(cells)
+        viewModel.checkForCompletion(cells)
     }
 
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {

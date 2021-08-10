@@ -8,7 +8,7 @@ data class Board(
 
     companion object {
         fun createMockBoard(): Board {
-            val cells = List(9 * 9) { i -> Cell(i / 9, i % 9, i % 9 + 1) }
+            val cells = List(9 * 9) { i -> Cell(i / 9, i % 9, i % 9 ) }
 
             cells[11].isStartingCell = true
             cells[21].isStartingCell = true
