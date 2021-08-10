@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.levels.LevelsActivity">
+    tools:context=".ui.list.PuzzlesListActivity">
 
     <TextView
-        android:id="@+id/levelHeadingTV"
+        android:id="@+id/headingTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -22,7 +22,7 @@
         />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/levelsRecyclerView"
+        android:id="@+id/puzzlesListRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
@@ -35,9 +35,9 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@id/levelHeadingTV"
+        app:layout_constraintTop_toBottomOf="@id/headingTV"
         app:layout_constraintVertical_bias="0.0"
         tools:itemCount="100"
-        tools:listitem="@layout/item_levels_list" />
+        tools:listitem="@layout/item_puzzles_list" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

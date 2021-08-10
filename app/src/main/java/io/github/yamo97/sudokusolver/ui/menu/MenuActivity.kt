@@ -5,8 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import io.github.yamo97.sudokusolver.databinding.ActivityMenuBinding
 import io.github.yamo97.sudokusolver.ui.BaseActivity
-import io.github.yamo97.sudokusolver.ui.game.GameActivity
-import io.github.yamo97.sudokusolver.ui.levels.LevelsActivity
+import io.github.yamo97.sudokusolver.ui.list.PuzzlesListActivity
 import io.github.yamo97.sudokusolver.util.toast
 
 class MenuActivity : BaseActivity<ActivityMenuBinding>() {
@@ -23,7 +22,7 @@ class MenuActivity : BaseActivity<ActivityMenuBinding>() {
         }
 
         binding.solveButton.setOnClickListener {
-            startActivity(Intent(this, LevelsActivity::class.java))
+            startActivity(Intent(this, PuzzlesListActivity::class.java))
         }
     }
 }

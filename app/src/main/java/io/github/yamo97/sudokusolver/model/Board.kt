@@ -7,7 +7,7 @@ data class Board(
     fun getCell(row: Int, col: Int) = cells[row * size + col]
 
     companion object {
-        fun createStartingBoard(): Board {
+        fun createMockBoard(): Board {
             val cells = List(9 * 9) { i -> Cell(i / 9, i % 9, i % 9 + 1) }
 
             cells[11].isStartingCell = true

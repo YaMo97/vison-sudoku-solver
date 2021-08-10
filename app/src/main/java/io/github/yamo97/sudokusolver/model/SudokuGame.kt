@@ -13,7 +13,7 @@ class SudokuGame {
     private var selectedCol = -1
     private var isTakingNotes = false
 
-    private val board = Board.createStartingBoard()
+    private val board = Board.createMockBoard()
 
     init {
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
