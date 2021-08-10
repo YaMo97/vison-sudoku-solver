@@ -59,6 +59,10 @@ class PuzzlesListActivity : BaseActivity<ActivityPuzzlesListBinding>() {
     private fun onPuzzleClicked(puzzle: Puzzle) {
         toast("Puzzle selected ${ puzzle.puzzleNumber }")
 
-        startActivity(Intent(this, GameActivity::class.java))
+        startActivity(
+            Intent(this, GameActivity::class.java).apply {
+                putExtra(GameActivity.INTENT_PUZZLE_ID, puzzle.puzzleID)
+            }
+        )
     }
 }

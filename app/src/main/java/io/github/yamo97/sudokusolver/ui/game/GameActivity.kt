@@ -3,17 +3,25 @@ package io.github.yamo97.sudokusolver.ui.game
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import io.github.yamo97.sudokusolver.R
 import io.github.yamo97.sudokusolver.databinding.ActivityGameBinding
 import io.github.yamo97.sudokusolver.model.Cell
+import io.github.yamo97.sudokusolver.model.GameState
+import io.github.yamo97.sudokusolver.model.SudokuGame
 import io.github.yamo97.sudokusolver.ui.BaseActivity
 import io.github.yamo97.sudokusolver.ui.custom.SudokuBoardView
+import io.github.yamo97.sudokusolver.util.toast
 
 class GameActivity : BaseActivity<ActivityGameBinding>() {
+
+    private val TAG = GameActivity::class.simpleName
 
     private lateinit var viewModel: GameViewModel
 
@@ -24,16 +32,6 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
-
-        viewModel.sudokuGame.selectedCellLiveData.observe(this, { updateSelectedCellUI(it) })
-
-        viewModel.sudokuGame.cellsLiveData.observe(this, { updateCells(it) })
-
-        viewModel.sudokuGame.isTakingNotesLiveData.observe(this, { updateNotesTakingUI(it) })
-
-        viewModel.sudokuGame.highlightedKeysLiveData.observe(this, { updateHighlightedKeys(it) })
 
         numberButtons = listOf(
             binding.buttonsLayout.oneButton,
@@ -46,16 +44,56 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
             binding.buttonsLayout.eightButton,
             binding.buttonsLayout.nineButton
         )
+
+        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
+
+        viewModel.gameStatusLiveData.observe(this) { handleGameState(it) }
+
+        viewModel.puzzleID = intent?.getIntExtra(INTENT_PUZZLE_ID, -1) ?: -1
+
+        viewModel.loadAndStartGame()
+    }
+
+    private fun handleGameState(gameState: GameState?) = gameState?.let {
+        Log.d(TAG, "Game State -> ${gameState.name}")
+        when (gameState) {
+            GameState.LOADING -> {
+                // Show Empty Board and Progress Bar
+                binding.loadingBar.visibility = View.VISIBLE
+            }
+            GameState.PLAYING -> {
+                // Start Playing
+
+                setupGameObserversAndButtons(viewModel.sudokuGame)
+
+                // Remove Loading Signs
+                binding.loadingBar.visibility = View.GONE
+            }
+            GameState.COMPLETED -> {
+
+            }
+            GameState.ERROR -> {
+                toast("Couldn't start the Game. Please try again.")
+            }
+        }
+    }
+
+    private fun setupGameObserversAndButtons(sudokuGame: SudokuGame?) = sudokuGame?.let {
+        sudokuGame.selectedCellLiveData.observe(this@GameActivity, { updateSelectedCellUI(it) })
+        sudokuGame.cellsLiveData.observe(this@GameActivity, { updateCells(it) })
+        sudokuGame.isTakingNotesLiveData.observe(this@GameActivity, { updateNotesTakingUI(it) })
+        sudokuGame.highlightedKeysLiveData.observe(this@GameActivity, { updateHighlightedKeys(it) })
+
         numberButtons.forEachIndexed { index, button ->
-            button.setOnClickListener { viewModel.sudokuGame.handleInput(index + 1) }
+            button.setOnClickListener { sudokuGame.handleInput(index + 1) }
         }
 
-        binding.buttonsLayout.notesButton.setOnClickListener { viewModel.sudokuGame.changeNoteTakingState() }
-        binding.buttonsLayout.deleteButton.setOnClickListener { viewModel.sudokuGame.deleteCell() }
+        binding.buttonsLayout.notesButton.setOnClickListener { sudokuGame.changeNoteTakingState() }
+        binding.buttonsLayout.deleteButton.setOnClickListener { sudokuGame.deleteCell() }
 
         binding.sudokuBoardView.registerListener(object : SudokuBoardView.OnTouchListener {
             override fun onCellTouched(row: Int, col: Int) {
-                viewModel.sudokuGame.updateSelectedCell(row, col)
+                sudokuGame.updateSelectedCell(row, col)
             }
         })
     }
@@ -90,4 +128,7 @@ class GameActivity : BaseActivity<ActivityGameBinding>() {
         }
     }
 
+    companion object {
+        const val INTENT_PUZZLE_ID = "puzzle-id"
+    }
 }
